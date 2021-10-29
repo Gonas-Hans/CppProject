@@ -37,8 +37,19 @@ public:
 	void MoveForward(float Axis);
 	void MoveRight(float Axis);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Death)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bDead;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float Power;
+
+	UPROPERTY(EditAnywhere)
+	float Power_Treshold;
+
+	UFUNCTION()
+	void OnBeginOverlap(class UPrimitiveComponent* HitComp,
+		class AActor* OtherActor, class UPrimitiveComponent* OtherComp,
+		int OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 protected:
 	// Called when the game starts or when spawned
