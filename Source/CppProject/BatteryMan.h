@@ -54,6 +54,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI HUD")
 	TSubclassOf<UUserWidget> Player_Power_Widget_Class;
 	UUserWidget* Player_Power_Widget;
+
+	void RestartGame();
 	
 
 protected:

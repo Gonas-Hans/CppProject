@@ -2,6 +2,9 @@
 
 
 #include "BatteryMan.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABatteryMan::ABatteryMan()
@@ -32,10 +35,12 @@ ABatteryMan::ABatteryMan()
 	bDead = false;
 
 	Power = 100.0f;
-	
+	Power_Treshold = 1.0f;
 	
 	
 }
+
+
 
 // Called when the game starts or when spawned
 void ABatteryMan::BeginPlay()
@@ -59,6 +64,26 @@ void ABatteryMan::BeginPlay()
 void ABatteryMan::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	Power -= DeltaTime * Power_Treshold;
+
+	if (Power <= 0)
+	{
+
+		if (!bDead)
+		{
+
+			bDead = true;
+
+			GetMesh()->SetSimulatePhysics(true);
+
+			FTimerHandle UnusedHandle;
+			GetWorldTimerManager().SetTimer(
+				UnusedHandle, this, &ABatteryMan::RestartGame, 3.0f, false);
+			
+		}
+		
+	}
 
 }
 
@@ -106,6 +131,13 @@ void ABatteryMan::MoveRight(float Axis)
 	
 }
 
+void ABatteryMan::RestartGame()
+{
+
+	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+	
+}
+
 void ABatteryMan::OnBeginOverlap(UPrimitiveComponent* HitComp,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -120,9 +152,7 @@ void ABatteryMan::OnBeginOverlap(UPrimitiveComponent* HitComp,
 		
 		OtherActor->Destroy();
 		
-
-		UE_LOG(LogTemp, Warning, TEXT("Collided with"))
-		
 	}
 
 }
+
